@@ -11,14 +11,17 @@ import (
 	"strings"
 )
 
+// ErrTodoAPI is returned on tado API errors.
 var ErrTodoAPI = errors.New("tado API error")
 
 type Client struct{}
 
+// NewClient creates a new client.
 func NewClient() *Client {
 	return &Client{}
 }
 
+// RequestRegistration should be the first step.
 func (c *Client) RequestRegistration(ctx context.Context) (*DeviceAuthorizeResponse, error) {
 	form := make(url.Values, 2)
 	form.Add("client_id", tadoClientID)
@@ -46,6 +49,7 @@ func (c *Client) RequestRegistration(ctx context.Context) (*DeviceAuthorizeRespo
 	return &deviceAuthRes, nil
 }
 
+// ExchangeDeviceCode needs to be called with the [DeviceAuthorizeResponse.DeviceCode] after the user approved the application by visiting [DeviceAuthorizeResponse.VerificationURIComplete].
 func (c *Client) ExchangeDeviceCode(ctx context.Context, deviceCode string) (*TokenResponse, error) {
 	form := make(url.Values, 2)
 	form.Add("client_id", tadoClientID)
@@ -75,6 +79,7 @@ func (c *Client) ExchangeDeviceCode(ctx context.Context, deviceCode string) (*To
 	return &tokenRes, nil
 }
 
+// RefreshToken can be used to exchange a refresh token for a new access token.
 func (c *Client) RefreshToken(ctx context.Context, refreshToken string) (*TokenResponse, error) {
 	form := make(url.Values, 2)
 	form.Add("client_id", tadoClientID)
